@@ -3,39 +3,28 @@ import API from "@/lib/axios";
 /* ================= BOOK OPD ================= */
 
 export interface BookOpdPayload {
-  hospital: {
-    hospitalId: string;
-    hospitalName: string;
-    hospitalType: "govt" | "private";
-  };
+  hospitalId: string;
+  doctorId: string;
   department: string;
-  doctor: {
-    doctorId: string;
-    doctorName: string;
-    qualification?: string;
-  };
+
   schedule: {
-    date: string;      // ISO string
-    timeSlot: string; // "10:00 - 10:10"
-    shift?: "morning" | "evening";
+    date: string;
+    timeSlot: string;
   };
-  token: {
-    tokenNumber: number;
-    queuePosition?: number;
-  };
+
   patient: {
     name: string;
     age: number;
     gender: "male" | "female" | "other";
     phone?: string;
-    abhaId?: string;
   };
+
   fees: {
-    registrationFee?: number;
-    consultationFee?: number;
+    registrationFee: number;
+    consultationFee: number;
     totalAmount: number;
   };
-  instructions?: string;
+
   source?: "web" | "mobile" | "kiosk";
 }
 
@@ -44,6 +33,13 @@ export const bookOpd = (data: BookOpdPayload) =>
   API.post("/opd/book", data);
 
 /* 🔥 MY APPOINTMENTS */
-export const getMyAppointments = () => {
-  return API.get("/opd/my-appointments");
-};
+export const getMyAppointments = () =>
+  API.get("/opd/my-appointments");
+
+/* 🔥 SINGLE APPOINTMENT DETAIL */
+export const getAppointmentById = (id: string) =>
+  API.get(`/opd/appointments/${id}`);
+
+/* 🔥 CANCEL OPD */
+export const cancelOpd = (id: string, reason?: string) =>
+  API.patch(`/opd/cancel/${id}`, { reason });

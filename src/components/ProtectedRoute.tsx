@@ -1,19 +1,40 @@
-import { Navigate, useLocation } from "react-router-dom";
-import { ReactNode } from "react";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
 
 interface ProtectedRouteProps {
-  children: ReactNode;
+  children: React.ReactNode;
+  allowedRoles?: string[];
 }
 
-const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const location = useLocation();
-  const token = localStorage.getItem("authToken");
+const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
+  const { user, loading } = useAuth();
 
-  if (!token) {
-    // Redirect to login page with the return url
-    return <Navigate to="/login" state={{ from: location }} replace />;
+  // ⏳ Wait until auth finishes
+  if (loading) {
+    return (
+      <div style={{ padding: "2rem", textAlign: "center" }}>
+        Loading...
+      </div>
+    );
   }
 
+  // ❌ Not logged in
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  // ❌ Role not allowed
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
+    // 🔥 role-based redirect (IMPORTANT FIX)
+    if (user.role === "HOSPITAL" || user.role === "ADMIN") {
+      return <Navigate to="/hospital/dashboard" replace />;
+    }
+
+    // USER / PATIENT
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  // ✅ Allowed
   return <>{children}</>;
 };
 

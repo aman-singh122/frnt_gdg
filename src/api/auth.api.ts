@@ -32,3 +32,4 @@ export const logoutUser = () =>
 // CURRENT USER
 export const getCurrentUser = () =>
   API.get("/auth/me");
+

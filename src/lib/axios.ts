@@ -6,8 +6,8 @@ import axios, {
 } from "axios";
 
 const API: AxiosInstance = axios.create({
-  baseURL: "http://localhost:3000/api",
-  withCredentials: true,
+  baseURL: "http://localhost:5000/api",
+  timeout: 10000, // ✅ safety
 });
 
 /* ---------- REQUEST INTERCEPTOR ---------- */
@@ -15,7 +15,11 @@ API.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = localStorage.getItem("token");
 
-    if (token) {
+    config.headers = {
+      ...config.headers,
+    };
+
+    if (token && token !== "undefined" && token !== "null") {
       config.headers.Authorization = `Bearer ${token}`;
     }
 
@@ -23,6 +27,7 @@ API.interceptors.request.use(
   },
   (error: AxiosError) => Promise.reject(error)
 );
+
 
 /* ---------- RESPONSE INTERCEPTOR ---------- */
 API.interceptors.response.use(
