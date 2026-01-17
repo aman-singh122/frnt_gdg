@@ -18,14 +18,14 @@ const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
     );
   }
 
-  // ❌ Not logged in
+  //  Not logged in
   if (!user) {
     return <Navigate to="/login" replace />;
   }
 
-  // ❌ Role not allowed
+  //  Role not allowed
   if (allowedRoles && !allowedRoles.includes(user.role)) {
-    // 🔥 role-based redirect (IMPORTANT FIX)
+    //  role-based redirect (IMPORTANT FIX)
     if (user.role === "HOSPITAL" || user.role === "ADMIN") {
       return <Navigate to="/hospital/dashboard" replace />;
     }
